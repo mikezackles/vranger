@@ -1,0 +1,9 @@
+#!/bin/bash
+
+export VRIM_ID="vrim_$(date +%s)"
+
+# Start ranger
+EDITOR="vrim" ranger
+
+# Attempt to stop vim server if it's running.  (This will cause the tmux session it's running in to exit.)
+vim --servername $VRIM_ID --remote-send '<Esc>:qa!<CR>' >/dev/null 2>&1

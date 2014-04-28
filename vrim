@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Drop the "--" argument if present.
+# Ranger passes "--" to indicate the end of the arguments, but vim treats it
+# as a filename after the --remote family of arguments.
+if [ "$1" == "--" ]; then
+  shift
+fi
+
+# Exit if we don't know what server/session to use
+if [ -z "$VRIM_ID" ]; then
+  echo "VRIM_ID not set!" >&2
+  echo "vrim is not meant to be invoked directly" >&2
+  exit 1
+fi
+
+# Default mapping to detach tmux is <Leader>q.  The user can override by
+# setting DETACH.
+if [ -z "$DETACH" ]; then
+  DETACH="<Leader>q"
+fi
+
+# Check to see if tmux session is running
+tmux has-session -t $VRIM_ID >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+  # Start vim server and containing tmux session
+  REMOVE_BLANK_BUFFER="b1 | bd" # I haven't found a way to prevent vim from opening a [No Name] buffer first.  This should remove it.
+  REMAP="nnoremap <silent> $DETACH :call system(\"tmux detach -s $VRIM_ID\")<LT>CR>" # note the <LT> workaround to prevent literal <CR>
+  START_VIM_SERVER="vim --servername $VRIM_ID --remote-silent +'$REMOVE_BLANK_BUFFER | $REMAP' $@"
+  tmux -2 new-session -s $VRIM_ID -d "$START_VIM_SERVER" \; set status off \; attach \; >/dev/null 2>&1
+else
+  # Open requested file and attach to server
+  vim --servername $VRIM_ID --remote $@
+  tmux -2 attach -t $VRIM_ID >/dev/null 2>&1
+fi
