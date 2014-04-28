@@ -17,9 +17,9 @@ Client/server communication in vim uses X11, so you'll need an X server running
 if you want to use it in OSX.  In Arch you can install via the AUR or the
 included PKGBUILD.
 
-By default, the "<Leader>q" mapping is used to suspend vim.  You should be able
-to use the DETACH environment variable to change this behavior.  For example,
-in bash you could try:
+By default, the "`<Leader>`q" mapping is used to suspend vim.  You should be
+able to use the DETACH environment variable to change this behavior.  For
+example, in bash you could try:
 
     DETACH="q" vranger
 
