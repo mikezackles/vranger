@@ -1,9 +1,9 @@
 #About
 
 Vranger is a bash hack that creates a single vim session which is bound to a
-ranger instance.  The user can suspend the vim session at any time and drop
-back into the previous ranger context.  This is accomplished by running a
-persistent vim server inside a tmux session.
+[ranger](http://ranger.nongnu.org/) instance.  The user can suspend the vim
+session at any time and drop back into the previous ranger context.  This is
+accomplished by running a persistent vim server inside a tmux session.
 
 Note that this is a different approach from spawning ranger instances from
 within vim, which has proved slow and unreliable for me.
@@ -23,6 +23,10 @@ able to use the DETACH environment variable to change this behavior.  For
 example, in bash you could try:
 
     DETACH="q" vranger
+
+#Usage
+
+Just run `vranger`.
 
 #Bugs
 
