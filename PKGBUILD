@@ -16,6 +16,6 @@ pkgver() {
 }
 
 package() {
-  install -Dm755 "$srcdir/vranger" "$pkgdir/usr/bin/vranger"
-  install -Dm755 "$srcdir/vrim" "$pkgdir/usr/bin/vrim"
+  install -Dm755 "$srcdir/vranger/vranger" "$pkgdir/usr/bin/vranger"
+  install -Dm755 "$srcdir/vranger/vrim" "$pkgdir/usr/bin/vrim"
 }
