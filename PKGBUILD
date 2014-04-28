@@ -1,3 +1,4 @@
+# Maintainer: Zachary Michaels
 pkgname=vranger-git
 pkgrel=1
 pkgver=0.0
@@ -7,6 +8,7 @@ url="http://github.com/mikezackles/vranger"
 depends=('tmux' 'ranger' 'vim')
 provides=('vranger')
 conflicts=('vranger')
+license=('GPL')
 source=(git+https://github.com/mikezackles/vranger.git)
 md5sums=(SKIP)
 
