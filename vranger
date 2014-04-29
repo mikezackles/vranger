@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Allow vranger to run inside a tmux instance.  This allows us to run a nested tmux instance.
+unset TMUX
+
 export VRIM_ID="vrim_$(date +%s)"
 
 # Start ranger
