@@ -31,6 +31,11 @@ example, in bash you could try:
 
     DETACH="q" vranger
 
+Please note that if you'd like to open a file in your vim session using the
+`:open_with` command, you should specify `vrim` as your editor instead of
+`vim`.  This is because vranger works by wrapping vim in the vrim script and
+passing that to ranger as the default editor.
+
 #Bugs
 
 This isn't a pretty hack, but it works well for me.  I'm sure there are plenty
