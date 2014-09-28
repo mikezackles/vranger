@@ -10,6 +10,15 @@ if [ -z "$DETACH" ]; then
   export DETACH="<Leader>q"
 fi
 
+# Check if VIM is compiled with client-server support
+if ! vim --version | fgrep -q -- '+clientserver'; then
+  # it isn't, use the send-keys hack
+  export VRIM_SENDKEYS=1
+elif vim --version | fgrep -q -- 'MacVim GUI'; then
+  # Only the GUI version (mvim) can act as a server, use the hack
+  export VRIM_SENDKEYS=1
+fi
+
 export VRIM_ID="vrim_$(date +%s)"
 
 if [ ! -x "$(which ranger)" ]; then
