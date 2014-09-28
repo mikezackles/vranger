@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Allow vranger to run inside a tmux instance.  This allows us to run a nested tmux instance.
 unset TMUX

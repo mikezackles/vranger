@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Drop the "--" argument if present.
 # Ranger passes "--" to indicate the end of the arguments, but vim treats it
