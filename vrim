@@ -22,8 +22,7 @@ if [ -z "$DETACH" ]; then
 fi
 
 # Check to see if tmux session is running
-tmux has-session -t $VRIM_ID >/dev/null 2>&1
-if [ $? -ne 0 ]; then
+if ! tmux has-session -t $VRIM_ID >/dev/null 2>&1; then
   # Start vim server and containing tmux session
   REMOVE_BLANK_BUFFER="b1 | bd" # I haven't found a way to prevent vim from opening a [No Name] buffer first.  This should remove it.
   REMAP="nnoremap <silent> $DETACH :call system(\"tmux detach -s $VRIM_ID\")<LT>CR>" # note the <LT> workaround to prevent literal <CR>
