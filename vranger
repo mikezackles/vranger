@@ -31,14 +31,34 @@ EDITOR="$(cd $(dirname $0) && pwd)/vrim" ranger
 
 # Ranger is now finished, and we need to do some cleanup.
 
+if tmux has-session -t $VRIM_ID >/dev/null 2>&1; then
+  VRIM_HAS_TMUX_SESSION=1
+fi
+
+_send_vim() {
+  if [ "$VRIM_HAS_TMUX_SESSION" != "1" ]; then
+    return
+  fi
+
+  if [ "$VRIM_SENDKEYS" = "1" ]; then
+    tmux send-keys -t $VRIM_ID Escape
+    tmux send-keys -t $VRIM_ID -l "$1"
+    tmux send-keys -t $VRIM_ID Enter
+  else
+    vim --servername $VRIM_ID --remote-send "<Esc>$1<CR>" >/dev/null 2>&1
+  fi
+}
+
 # Prevent the user from inadvertently detaching and accidentally
-# leaving a running tmux instance
-vim --servername $VRIM_ID --remote-send "<Esc>:nunmap $DETACH<CR>" >/dev/null 2>&1
+# leaving a running tmux instance.
+_send_vim ":nunmap $DETACH"
 
 # Ask vim to quit
-vim --servername $VRIM_ID --remote-send '<Esc>:qa<CR>' >/dev/null 2>&1
+_send_vim ":qa"
 
 # Reattach to tmux.  If there were no unsaved changes, vim and tmux should both
 # exit.  Otherwise, vim gets a chance to prompt the user, and the user must
 # exit the session normally.
-tmux -2 attach -t $VRIM_ID >/dev/null 2>&1
+if [ "$VRIM_HAS_TMUX_SESSION" = "1" ]; then
+  tmux -2 attach -t $VRIM_ID >/dev/null 2>&1
+fi
