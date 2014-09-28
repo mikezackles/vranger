@@ -12,6 +12,11 @@ fi
 
 export VRIM_ID="vrim_$(date +%s)"
 
+if [ ! -x "$(which ranger)" ]; then
+    echo "ranger could not be found." >&2
+    exit 1
+fi
+
 # Start ranger
 EDITOR="$(cd $(dirname $0) && pwd)/vrim" ranger
 
