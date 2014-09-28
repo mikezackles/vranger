@@ -12,7 +12,7 @@ fi
 export VRIM_ID="vrim_$(date +%s)"
 
 # Start ranger
-EDITOR="vrim" ranger
+EDITOR="$(cd $(dirname $0) && pwd)/vrim" ranger
 
 # Ranger is now finished, and we need to do some cleanup.
 
