@@ -1,10 +1,11 @@
 #!/bin/sh
 
-# Allow vranger to run inside a tmux instance.  This allows us to run a nested tmux instance.
+# Allow vranger to run inside a tmux instance.
+# This allows us to run a nested tmux instance.
 unset TMUX
 
-# Default mapping to detach tmux is <Leader>q.  The user can override by
-# setting DETACH.
+# Default mapping to detach tmux is <Leader>q.
+# The user can override by setting DETACH.
 if [ -z "$DETACH" ]; then
   export DETACH="<Leader>q"
 fi
@@ -16,7 +17,8 @@ EDITOR="$(cd $(dirname $0) && pwd)/vrim" ranger
 
 # Ranger is now finished, and we need to do some cleanup.
 
-# Prevent the user from inadvertently detaching and accidentally leaving a running tmux instance
+# Prevent the user from inadvertently detaching and accidentally
+# leaving a running tmux instance
 vim --servername $VRIM_ID --remote-send "<Esc>:nunmap $DETACH<CR>" >/dev/null 2>&1
 
 # Ask vim to quit
