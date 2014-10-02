@@ -41,6 +41,12 @@ fi
 # Check to see if tmux session is running
 if ! tmux has-session -t $VRIM_ID >/dev/null 2>&1; then
   # Start vim server and containing tmux session
+  REATTACH=$(which reattach-to-user-namespace)
+
+  if [ -x "$REATTACH" ]; then
+    START_VIM_SERVER="$REATTACH $START_VIM_SERVER"
+  fi
+
   exec tmux -2 new-session -s $VRIM_ID "$START_VIM_SERVER" \; set status off \; >/dev/null 2>&1
 else
   # Open requested file and attach to server
