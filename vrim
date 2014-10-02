@@ -27,6 +27,13 @@ if ! tmux has-session -t $VRIM_ID >/dev/null 2>&1; then
   REMOVE_BLANK_BUFFER="bd1" # I haven't found a way to prevent vim from opening a [No Name] buffer first.  This should remove it.
   REMAP="nnoremap <silent> $DETACH :call system(\"tmux detach -s $VRIM_ID\")<LT>CR>" # note the <LT> workaround to prevent literal <CR>
   START_VIM_SERVER="vim --servername $VRIM_ID --remote-silent +'$REMOVE_BLANK_BUFFER | $REMAP' \"$@\""
+
+  REATTACH=$(which reattach-to-user-namespace)
+
+  if [ -x "$REATTACH" ]; then
+    START_VIM_SERVER="$REATTACH $START_VIM_SERVER"
+  fi
+
   exec tmux -2 new-session -s $VRIM_ID "$START_VIM_SERVER" \; set status off \; >/dev/null 2>&1
 else
   # Open requested file and attach to server
