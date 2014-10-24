@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Drop the "--" argument if present.
 # Ranger passes "--" to indicate the end of the arguments, but vim treats it
@@ -21,16 +21,35 @@ if [ -z "$DETACH" ]; then
   exit 1
 fi
 
-# Check to see if tmux session is running
-tmux has-session -t $VRIM_ID >/dev/null 2>&1
-if [ $? -ne 0 ]; then
-  # Start vim server and containing tmux session
-  REMOVE_BLANK_BUFFER="b1 | bd" # I haven't found a way to prevent vim from opening a [No Name] buffer first.  This should remove it.
-  REMAP="nnoremap <silent> $DETACH :call system(\"tmux detach -s $VRIM_ID\")<LT>CR>" # note the <LT> workaround to prevent literal <CR>
+REMAP="nnoremap <silent> $DETACH :call system(\"tmux detach -s $VRIM_ID\")"
+
+if [ "$VRIM_SENDKEYS" = "1" ]; then
+  REMAP="$REMAP<CR>"
+  START_VIM_SERVER="vim -c '$REMAP' \"$@\""
+else
+  # note the <LT> workaround to prevent literal <CR>
+  # being interpreted by --remote-silent
+  REMAP="$REMAP<LT>CR>"
+
+  # I haven't found a way to prevent vim from opening a [No Name] buffer first.
+  # This deletes the first buffer.
+  REMOVE_BLANK_BUFFER="bd1"
+
   START_VIM_SERVER="vim --servername $VRIM_ID --remote-silent +'$REMOVE_BLANK_BUFFER | $REMAP' \"$@\""
-  tmux -2 new-session -s $VRIM_ID "$START_VIM_SERVER" \; set status off \; >/dev/null 2>&1
+fi
+
+# Check to see if tmux session is running
+if ! tmux has-session -t $VRIM_ID >/dev/null 2>&1; then
+  # Start vim server and containing tmux session
+  exec tmux -2 new-session -s $VRIM_ID "$START_VIM_SERVER" \; set status off \; >/dev/null 2>&1
 else
   # Open requested file and attach to server
-  vim --servername $VRIM_ID --remote "$@"
-  tmux -2 attach -t $VRIM_ID >/dev/null 2>&1
+  if [ "$VRIM_SENDKEYS" = "1" ]; then
+    tmux send-keys -t $VRIM_ID Escape
+    tmux send-keys -t $VRIM_ID -l ":e $@"
+    tmux send-keys -t $VRIM_ID Enter
+  else
+    vim --servername $VRIM_ID --remote "$@"
+  fi
+  exec tmux -2 attach -t $VRIM_ID >/dev/null 2>&1
 fi

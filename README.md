@@ -13,9 +13,12 @@ Multiple vranger instances can be run in parallel.
 
 #Installation
 
-Vranger requires ranger, tmux, vim, and bash.  Client/server communication in
-vim uses X11, so this will not work without an X server running.  Both the
-vranger and vrim scripts should be in your PATH.
+Vranger requires ranger, tmux, and vim.  When vim supports client/server
+communication via X11, it will use that to pass the commands.  When vim
+client/server support is not available, the commands are passed by the tmux
+send-keys facility, which might be kinda fragile.
+
+Both the vranger and vrim scripts should be in your PATH.
 
 In Arch Linux, you can install via the
 [AUR](https://aur.archlinux.org/packages/vranger-git/) or the included

@@ -1,28 +1,64 @@
-#!/bin/bash
+#!/bin/sh
 
-# Allow vranger to run inside a tmux instance.  This allows us to run a nested tmux instance.
+# Allow vranger to run inside a tmux instance.
+# This allows us to run a nested tmux instance.
 unset TMUX
 
-# Default mapping to detach tmux is <Leader>q.  The user can override by
-# setting DETACH.
+# Default mapping to detach tmux is <Leader>q.
+# The user can override by setting DETACH.
 if [ -z "$DETACH" ]; then
   export DETACH="<Leader>q"
 fi
 
+# Check if VIM is compiled with client-server support
+if ! vim --version | fgrep -q -- '+clientserver'; then
+  # it isn't, use the send-keys hack
+  export VRIM_SENDKEYS=1
+elif vim --version | fgrep -q -- 'MacVim GUI'; then
+  # Only the GUI version (mvim) can act as a server, use the hack
+  export VRIM_SENDKEYS=1
+fi
+
 export VRIM_ID="vrim_$(date +%s)"
 
+if [ ! -x "$(which ranger)" ]; then
+    echo "ranger could not be found." >&2
+    exit 1
+fi
+
 # Start ranger
-EDITOR="vrim" ranger
+EDITOR="$(cd $(dirname $0) && pwd)/vrim" ranger
 
 # Ranger is now finished, and we need to do some cleanup.
 
-# Prevent the user from inadvertently detaching and accidentally leaving a running tmux instance
-vim --servername $VRIM_ID --remote-send "<Esc>:nunmap $DETACH<CR>" >/dev/null 2>&1
+if tmux has-session -t $VRIM_ID >/dev/null 2>&1; then
+  VRIM_HAS_TMUX_SESSION=1
+fi
+
+_send_vim() {
+  if [ "$VRIM_HAS_TMUX_SESSION" != "1" ]; then
+    return
+  fi
+
+  if [ "$VRIM_SENDKEYS" = "1" ]; then
+    tmux send-keys -t $VRIM_ID Escape
+    tmux send-keys -t $VRIM_ID -l "$1"
+    tmux send-keys -t $VRIM_ID Enter
+  else
+    vim --servername $VRIM_ID --remote-send "<Esc>$1<CR>" >/dev/null 2>&1
+  fi
+}
+
+# Prevent the user from inadvertently detaching and accidentally
+# leaving a running tmux instance.
+_send_vim ":nunmap $DETACH"
 
 # Ask vim to quit
-vim --servername $VRIM_ID --remote-send '<Esc>:qa<CR>' >/dev/null 2>&1
+_send_vim ":qa"
 
 # Reattach to tmux.  If there were no unsaved changes, vim and tmux should both
 # exit.  Otherwise, vim gets a chance to prompt the user, and the user must
 # exit the session normally.
-tmux -2 attach -t $VRIM_ID >/dev/null 2>&1
+if [ "$VRIM_HAS_TMUX_SESSION" = "1" ]; then
+  tmux -2 attach -t $VRIM_ID >/dev/null 2>&1
+fi
