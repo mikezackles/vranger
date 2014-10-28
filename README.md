@@ -16,7 +16,7 @@ Multiple vranger instances can be run in parallel.
 Vranger requires ranger, tmux, and vim.  When vim supports client/server
 communication via X11, it will use that to pass the commands.  When vim
 client/server support is not available, the commands are passed by the tmux
-send-keys facility, which might be kinda fragile.
+send-keys facility.
 
 Both the vranger and vrim scripts should be in your PATH.
 
