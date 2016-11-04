@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Allow vranger to run inside a tmux instance.
 # This allows us to run a nested tmux instance.
