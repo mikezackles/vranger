@@ -6,7 +6,7 @@ session at any time and drop back into the previous ranger context.  This is
 accomplished by running a persistent vim server inside a tmux session.
 
 See
-[here](https://github.com/hut/ranger/blob/master/doc/examples/vim_file_chooser.vim)
+[here](https://github.com/ranger/ranger/blob/master/examples/vim_file_chooser.vim)
 for an alternative approach.
 
 Multiple vranger instances can be run in parallel.
@@ -20,9 +20,7 @@ send-keys facility.
 
 Both the vranger and vrim scripts should be in your PATH.
 
-In Arch Linux, you can install via the
-[AUR](https://aur.archlinux.org/packages/vranger-git/) or the included
-PKGBUILD.
+In Arch Linux, you can install via the included PKGBUILD.
 
 #Usage
 
