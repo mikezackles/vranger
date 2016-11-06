@@ -37,6 +37,12 @@ Please note that if you'd like to open a file in your vim session using the
 `vim`.  This is because vranger works by wrapping vim in the vrim script and
 passing that to ranger as the default editor.
 
+#Tabs
+
+Vranger's default behavior is to open new files in separate vim buffers. If
+you'd like new files to be opened in tabs, use the `VRIM_USE_TABS` environment
+variable: `VRIM_USE_TABS=1 vranger`.
+
 #Contributors
 
 send-keys/OS X support contributed by @juliekoubova
