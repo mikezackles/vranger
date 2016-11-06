@@ -35,7 +35,7 @@ if tmux has-session -t $VRANGER_ID >/dev/null 2>&1; then
   VRANGER_HAS_TMUX_SESSION=1
 fi
 
-_send_vim() {
+send_vim_command() {
   if [ "$VRANGER_HAS_TMUX_SESSION" != "1" ]; then
     return
   fi
@@ -51,10 +51,10 @@ _send_vim() {
 
 # Prevent the user from inadvertently detaching and accidentally
 # leaving a running tmux instance.
-_send_vim ":nunmap $VRANGER_DETACH"
+send_vim_command ":nunmap $VRANGER_DETACH"
 
 # Ask vim to quit
-_send_vim ":qa"
+send_vim_command ":qa"
 
 # Reattach to tmux.  If there were no unsaved changes, vim and tmux should both
 # exit.  Otherwise, vim gets a chance to prompt the user, and the user must
