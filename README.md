@@ -26,11 +26,11 @@ In Arch Linux, you can install via the included PKGBUILD.
 
 Just run `vranger`.
 
-By default, the `<Leader>q` mapping is used to suspend vim.  You should be
-able to use the DETACH environment variable to change this behavior.  For
+By default, the `<Leader>q` mapping is used to suspend vim.  You should be able
+to use the `VRANGER_DETACH` environment variable to change this behavior.  For
 example, in bash you could try:
 
-    DETACH="q" vranger
+    VRANGER_DETACH="q" vranger
 
 Please note that if you'd like to open a file in your vim session using the
 `:open_with` command, you should specify `vrim` as your editor instead of
@@ -40,8 +40,8 @@ passing that to ranger as the default editor.
 #Tabs
 
 Vranger's default behavior is to open new files in separate vim buffers. If
-you'd like new files to be opened in tabs, use the `VRIM_USE_TABS` environment
-variable: `VRIM_USE_TABS=1 vranger`.
+you'd like new files to be opened in tabs, use the `VRANGER_USE_TABS`
+environment variable: `VRANGER_USE_TABS=1 vranger`.
 
 #Contributors
 

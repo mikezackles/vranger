@@ -8,22 +8,22 @@ if [ "$1" == "--" ]; then
 fi
 
 # Exit if we don't know what server/session to use
-if [ -z "$VRIM_ID" ]; then
-  echo "VRIM_ID not set!" >&2
+if [ -z "$VRANGER_ID" ]; then
+  echo "VRANGER_ID not set!" >&2
   echo "vrim is not meant to be invoked directly" >&2
   exit 1
 fi
 
-# Exit if we don't have a DETACH mapping
-if [ -z "$DETACH" ]; then
-  echo "DETACH not set!" >&2
+# Exit if we don't have a VRANGER_DETACH mapping
+if [ -z "$VRANGER_DETACH" ]; then
+  echo "VRANGER_DETACH not set!" >&2
   echo "vrim is not meant to be invoked directly" >&2
   exit 1
 fi
 
-REMAP="nnoremap <silent> $DETACH :call system(\"tmux detach -s $VRIM_ID\")"
+REMAP="nnoremap <silent> $VRANGER_DETACH :call system(\"tmux detach -s $VRANGER_ID\")"
 
-if [ "$VRIM_SENDKEYS" = "1" ]; then
+if [ "$VRANGER_SENDKEYS" = "1" ]; then
   REMAP="$REMAP<CR>"
   START_VIM_SERVER="vim -c '$REMAP' \"$@\""
 else
@@ -35,11 +35,11 @@ else
   # This deletes the first buffer.
   REMOVE_BLANK_BUFFER="bd1"
 
-  START_VIM_SERVER="vim --servername $VRIM_ID --remote-silent +'$REMOVE_BLANK_BUFFER | $REMAP' \"$@\""
+  START_VIM_SERVER="vim --servername $VRANGER_ID --remote-silent +'$REMOVE_BLANK_BUFFER | $REMAP' \"$@\""
 fi
 
 # Check to see if tmux session is running
-if ! tmux has-session -t $VRIM_ID >/dev/null 2>&1; then
+if ! tmux has-session -t $VRANGER_ID >/dev/null 2>&1; then
   # Start vim server and containing tmux session
   REATTACH=$(which reattach-to-user-namespace 2>/dev/null)
 
@@ -47,25 +47,25 @@ if ! tmux has-session -t $VRIM_ID >/dev/null 2>&1; then
     START_VIM_SERVER="$REATTACH $START_VIM_SERVER"
   fi
 
-  exec tmux -2 new-session -s $VRIM_ID "$START_VIM_SERVER" \; set status off \; >/dev/null 2>&1
+  exec tmux -2 new-session -s $VRANGER_ID "$START_VIM_SERVER" \; set status off \; >/dev/null 2>&1
 else
   # Open requested file and attach to server
-  if [ "$VRIM_SENDKEYS" == "1" ]; then
-    if [ "$VRIM_USE_TABS" == "1" ]; then
-      tmux send-keys -t $VRIM_ID Escape
-      tmux send-keys -t $VRIM_ID -l ":tabnew $@"
-      tmux send-keys -t $VRIM_ID Enter
+  if [ "$VRANGER_SENDKEYS" == "1" ]; then
+    if [ "$VRANGER_USE_TABS" == "1" ]; then
+      tmux send-keys -t $VRANGER_ID Escape
+      tmux send-keys -t $VRANGER_ID -l ":tabnew $@"
+      tmux send-keys -t $VRANGER_ID Enter
     else
-      tmux send-keys -t $VRIM_ID Escape
-      tmux send-keys -t $VRIM_ID -l ":e $@"
-      tmux send-keys -t $VRIM_ID Enter
+      tmux send-keys -t $VRANGER_ID Escape
+      tmux send-keys -t $VRANGER_ID -l ":e $@"
+      tmux send-keys -t $VRANGER_ID Enter
     fi
   else
-    if [ "$VRIM_USE_TABS" == "1" ]; then
-      vim --servername $VRIM_ID --remote-tab "$@"
+    if [ "$VRANGER_USE_TABS" == "1" ]; then
+      vim --servername $VRANGER_ID --remote-tab "$@"
     else
-      vim --servername $VRIM_ID --remote "$@"
+      vim --servername $VRANGER_ID --remote "$@"
     fi
   fi
-  exec tmux -2 attach -t $VRIM_ID >/dev/null 2>&1
+  exec tmux -2 attach -t $VRANGER_ID >/dev/null 2>&1
 fi
