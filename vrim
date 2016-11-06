@@ -50,12 +50,22 @@ if ! tmux has-session -t $VRIM_ID >/dev/null 2>&1; then
   exec tmux -2 new-session -s $VRIM_ID "$START_VIM_SERVER" \; set status off \; >/dev/null 2>&1
 else
   # Open requested file and attach to server
-  if [ "$VRIM_SENDKEYS" = "1" ]; then
-    tmux send-keys -t $VRIM_ID Escape
-    tmux send-keys -t $VRIM_ID -l ":e $@"
-    tmux send-keys -t $VRIM_ID Enter
+  if [ "$VRIM_SENDKEYS" == "1" ]; then
+    if [ "$VRIM_USE_TABS" == "1" ]; then
+      tmux send-keys -t $VRIM_ID Escape
+      tmux send-keys -t $VRIM_ID -l ":tabnew $@"
+      tmux send-keys -t $VRIM_ID Enter
+    else
+      tmux send-keys -t $VRIM_ID Escape
+      tmux send-keys -t $VRIM_ID -l ":e $@"
+      tmux send-keys -t $VRIM_ID Enter
+    fi
   else
-    vim --servername $VRIM_ID --remote "$@"
+    if [ "$VRIM_USE_TABS" == "1" ]; then
+      vim --servername $VRIM_ID --remote-tab "$@"
+    else
+      vim --servername $VRIM_ID --remote "$@"
+    fi
   fi
   exec tmux -2 attach -t $VRIM_ID >/dev/null 2>&1
 fi
